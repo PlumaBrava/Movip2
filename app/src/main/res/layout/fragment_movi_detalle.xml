@@ -1,0 +1,117 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+<LinearLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.perezjuanjose.movip1.MovieDetalleFragment"
+    android:orientation="vertical"
+    android:nestedScrollingEnabled="true">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/detail_horizontal_superior"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       >
+
+
+        <ImageView
+            android:id="@+id/detail_image"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="left"
+            android:layout_marginLeft="1dp" />
+
+
+
+        <LinearLayout
+
+            android:id="@+id/detail_horizontal_rigth"
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="right"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
+
+
+            <TextView
+
+                android:id="@+id/detail_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/black"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:textStyle="bold"/>
+
+            <TextView
+
+                android:text="Releace Date:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+
+                android:id="@+id/releace_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                />
+
+
+            <TextView
+
+                android:text="Vote Average:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+
+                android:id="@+id/vote_average"
+                android:inputType="number"
+                android:maxLength="4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+    <TextView
+
+    android:id="@+id/overview" android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+        />
+
+
+
+</LinearLayout>
+
+
+</ScrollView>
+
+
+

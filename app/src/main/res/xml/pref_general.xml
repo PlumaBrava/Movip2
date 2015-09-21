@@ -1,0 +1,26 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: ListPreference's ORDER BY. -->
+    <ListPreference
+        android:key="order_by"
+        android:title="@string/order_by"
+        android:defaultValue="popularity."
+        android:entries="@array/order_by"
+        android:entryValues="@array/order_by_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- NOTE: ListPreference's ASCNDENTE/DESCENDENT -->
+    <ListPreference
+        android:key="asc_desc"
+        android:title="@string/ascendent_descendent"
+        android:defaultValue="desc"
+        android:entries="@array/ascendent_descendent"
+        android:entryValues="@array/ascendent_descendent_value"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+
+
+</PreferenceScreen>
+
