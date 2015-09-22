@@ -1,18 +1,29 @@
 package com.perezjuanjose.movip2;
 
+import android.app.LoaderManager;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.perezjuanjose.movip2.data.FilmsColumns;
+import com.perezjuanjose.movip2.data.FilmsProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +36,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 
 /**
@@ -32,7 +44,9 @@ import java.util.ArrayList;
  */
 
 
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>  {
+
+    private static final int MOVIES_LOADER = 0;
 
     public static boolean preferenceHasChanged = false;
     static private String API_KEY  ="79424eca98daa0b906a464bf7d8f9f0f";
@@ -74,7 +88,7 @@ public class MovieFragment extends Fragment {
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
 
-
+        getLoaderManager().initLoader(MOVIES_LOADER, null, this);
 
         // Update data form the web ot read the saved datea
         if(savedInstanceState==null || !savedInstanceState.containsKey("Films")){
@@ -107,7 +121,7 @@ public void updateData(){
    // Read the Preference to call the web
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
     String order_by=prefs.getString(ORDER_BY, "popularity.");
-    String asc_desc = prefs.getString(ASC_DESC,"desc");
+    String asc_desc = prefs.getString(ASC_DESC, "desc");
 
     Log.i("Prererencias", "order_by:" + order_by + "asc_desc: " + asc_desc);
 
@@ -183,6 +197,28 @@ public void updateData(){
         return v;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        return new CursorLoader(getActivity(), FilmsProvider.Films.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
     public class FetchMoviesTask extends AsyncTask<String, Void, Film[]> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
@@ -231,7 +267,8 @@ public void updateData(){
             JSONArray resultsArray = pageMoviesJson.getJSONArray(OWM_RESULTS);
 
             // OWM returns the data of the movies in an array
-
+            // Insert the new film information into the database
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(resultsArray.length());
 
             Film[] resulMovies = new Film[resultsArray.length()];
             for(int i = 0; i < resultsArray.length(); i++) {
@@ -267,6 +304,72 @@ public void updateData(){
 
 
                 resulMovies[i]= new Film(adults,backdrop_path,origianlLanguaje,originalTitle,overview,releaseDate,posterPath,popularity,title,video,voteAverage,vote_count);
+
+                Log.d(LOG_TAG, "insert");
+                ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>(1);
+
+
+                    ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
+                            FilmsProvider.Films.CONTENT_URI);
+                    builder.withValue(FilmsColumns.COLUMN_ADULTS, adults);
+                    builder.withValue(FilmsColumns.COLUMN_BACKDROP_PATH, backdrop_path);
+                    builder.withValue(FilmsColumns.COLUMN_ORIGINAL_LANGUAJE, origianlLanguaje);
+                builder.withValue(FilmsColumns.COLUMN_ORIGINAL_TITLE, originalTitle);
+                builder.withValue(FilmsColumns.COLUMN_OVERVIEW, overview);
+                builder.withValue(FilmsColumns.COLUMN_RELEASE_DATE, releaseDate);
+                builder.withValue(FilmsColumns.COLUMN_POSTER_PATH, posterPath);
+                builder.withValue(FilmsColumns.COLUMN_POPULARITY, popularity);
+                builder.withValue(FilmsColumns.COLUMN_TITLE, title);
+                builder.withValue(FilmsColumns.COLUMN_VIDEO, video);
+                builder.withValue(FilmsColumns.COLUMN_VOTE_AGERAGE, voteAverage);
+                builder.withValue(FilmsColumns.COLUMN_VOTE_COUNT, vote_count);
+                builder.withValue(FilmsColumns.COLUMN_VOTE_AGERAGE, voteAverage);
+                    batchOperations.add(builder.build());
+
+
+                try{
+                    getActivity().getContentResolver().applyBatch(FilmsProvider.AUTHORITY, batchOperations);
+                } catch(RemoteException | OperationApplicationException e){
+                    Log.e(LOG_TAG, "Error applying batch insert", e);
+                }
+
+
+
+
+
+
+
+//
+//                ContentValues filmValues = new ContentValues();
+//
+//                filmValues.put(FilmsColumns.COLUMN_ADULTS, adults);
+//                filmValues.put(FilmsColumns.COLUMN_BACKDROP_PATH, backdrop_path);
+//                filmValues.put(FilmsColumns.COLUMN_ORIGINAL_LANGUAJE, origianlLanguaje);
+//                filmValues.put(FilmsColumns.COLUMN_ORIGINAL_TITLE, originalTitle);
+//                filmValues.put(FilmsColumns.COLUMN_OVERVIEW, overview);
+//                filmValues.put(FilmsColumns.COLUMN_RELEASE_DATE, releaseDate);
+//                filmValues.put(FilmsColumns.COLUMN_POSTER_PATH, posterPath);
+//                filmValues.put(FilmsColumns.COLUMN_POPULARITY, popularity);
+//                filmValues.put(FilmsColumns.COLUMN_TITLE, title);
+//                filmValues.put(FilmsColumns.COLUMN_VIDEO, video);
+//                filmValues.put(FilmsColumns.COLUMN_VOTE_AGERAGE, voteAverage);
+//                filmValues.put(FilmsColumns.COLUMN_VOTE_COUNT, vote_count);
+//
+//
+//
+//                cVVector.add(filmValues);
+//
+//                int inserted = 0;
+//                // add to database
+//                if ( cVVector.size() > 0 ) {
+//                    ContentValues[] cvArray = new ContentValues[cVVector.size()];
+//                    cVVector.toArray(cvArray);
+//
+//                  inserted = getActivity().getContentResolver().bulkInsert(FilmsProvider.Films.CONTENT_URI, cvArray);
+//                }
+
+                //Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+
 
 
             }
@@ -387,5 +490,5 @@ public void updateData(){
             }
         }
     }
-    
+
 }

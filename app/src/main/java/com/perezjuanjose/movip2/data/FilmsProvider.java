@@ -17,7 +17,7 @@ import net.simonvt.schematic.annotation.TableEndpoint;
 
 )
 public class FilmsProvider {
-    public static final String AUTHORITY = "com.perezjuanjose.movip2";
+    public static final String AUTHORITY = "com.perezjuanjose.movip2.data.FilmsProvider";
     static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     interface Path{

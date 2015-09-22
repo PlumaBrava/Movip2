@@ -37,7 +37,7 @@
     </application>
 
     <provider
-        android:name="com.perezjuanjose.movip2.data.FilmsProvider"
-        android:authorities="com.perezjuanjose.movip2"
+        android:authorities="com.perezjuanjose.movip2.data.FilmsProvider"
+        android:name="com.perezjuanjose.movip2.data.generated.FilmsProvider"
         android:exported="false" />
 </manifest>
